@@ -32,6 +32,7 @@
         icon.style.display = "none";
         icon.style.position = "absolute";
         icon.style.zIndex = "9999";
+        icon.style.filter = "drop-shadow(0 0 1px #ffffff)";
 
         link.appendChild(icon);
         document.body.appendChild(link);
