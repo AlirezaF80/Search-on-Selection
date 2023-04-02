@@ -9,7 +9,7 @@
     'use strict';
     // Define a dictionary that contains the link and icon information
     const links = {
-        "IAFD": {
+        "Google": {
             icon: "https://www.google.com/s2/favicons?sz=32&domain=google.com",
             urlFunction: function(name) {
                 return "https://www.google.com/search?q=" + name;
