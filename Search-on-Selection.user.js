@@ -1,9 +1,21 @@
 // ==UserScript==
 // @name         Search On Selection
-// @version      0.2
+// @version      0.2.1
 // @description  Search the selected text on different sites with a single click.
 // @match        *://*/*
 // ==/UserScript==
+function tempAlert(message, duration) {
+    const alertBackgroundElement = document.createElement("div");
+    alertBackgroundElement.setAttribute("style", "position:absolute;bottom:0%;left:50%;background-color:black; border-radius: 5px; padding: 5px;");
+    const textElement = document.createElement("span");
+    textElement.setAttribute("style", "color:white; ");
+    alertBackgroundElement.appendChild(textElement);
+    textElement.innerHTML = message;
+    setTimeout(function () {
+        alertBackgroundElement.parentNode.removeChild(alertBackgroundElement);
+    }, duration);
+    document.body.appendChild(alertBackgroundElement);
+}
 
 (function () {
     'use strict';
@@ -14,6 +26,7 @@
             onclick: function (selectedText) {
                 // copy the selected text to the clipboard
                 navigator.clipboard.writeText(selectedText);
+                tempAlert("Copied to Clipboard!", 1000);
             },
             getUrl: function (selectedText) { return null; }
         },
@@ -64,12 +77,12 @@
             for (const key in elements) {
                 const element = elements[key];
                 const linkInfo = links[key];
-                
+
                 let link = linkInfo.getUrl(selection.toString());
-                
+
                 if (link !== null) {
                     // check if link is the same as the page we're on, if so, don't show the link
-                    if (link.replace("www.", "") === window.location.href.replace("www.", "")) { 
+                    if (link.replace("www.", "") === window.location.href.replace("www.", "")) {
                         element.link.style.display = "none";
                         element.icon.style.display = "none";
                         continue;
@@ -93,7 +106,7 @@
                 element.icon.style.display = "block";
 
                 const link = linkInfo.getUrl(selection.toString());
-                if (link !== null){
+                if (link !== null) {
                     element.link.href = link;
                 }
 
