@@ -5,13 +5,13 @@
 // @match        *://*/*
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
     // Define a dictionary that contains the link and icon information
     const links = {
         "Google": {
             icon: "https://www.google.com/s2/favicons?sz=32&domain=google.com",
-            urlFunction: function(name) {
+            urlFunction: function (name) {
                 return "https://www.google.com/search?q=" + name;
             }
         }
@@ -25,24 +25,24 @@
         link.target = "_blank";
         link.style.display = "none";
 
-        const icon = document.createElement("img");
-        icon.src = links[key].icon;
-        icon.style.width = "24px";
-        icon.style.height = "24px";
-        icon.style.display = "none";
-        icon.style.position = "absolute";
-        icon.style.zIndex = "9999";
-        icon.style.filter = "drop-shadow(0 0 1px #ffffff)";
+        const iconImg = document.createElement("img");
+        iconImg.src = links[key].icon;
+        iconImg.style.width = "24px";
+        iconImg.style.height = "24px";
+        iconImg.style.display = "none";
+        iconImg.style.position = "absolute";
+        iconImg.style.zIndex = "9999";
+        iconImg.style.filter = "drop-shadow(0 0 1px #ffffff)";
 
-        link.appendChild(icon);
+        link.appendChild(iconImg);
         document.body.appendChild(link);
 
-        elements[key] = { link: link, icon: icon };
+        elements[key] = { link: link, icon: iconImg };
     }
 
 
     // Handle selection changes
-    document.addEventListener("selectionchange", function() {
+    document.addEventListener("selectionchange", function () {
         const selection = document.getSelection();
         if (selection.toString().length) {
             const range = selection.getRangeAt(0);
