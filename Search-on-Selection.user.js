@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Search On Selection
-// @version      0.1
+// @version      0.2
 // @description  Search the selected text on different sites with a single click.
 // @match        *://*/*
 // ==/UserScript==
