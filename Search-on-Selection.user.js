@@ -4,27 +4,31 @@
 // @description  Search the selected text on different sites with a single click.
 // @match        *://*/*
 // ==/UserScript==
-function tempAlert(message, duration) {
-    const alertBackgroundElement = document.createElement("div");
-    alertBackgroundElement.setAttribute("style", "position:absolute;bottom:0%;left:50%;background-color:black; border-radius: 5px; padding: 5px;");
-    const textElement = document.createElement("span");
-    textElement.setAttribute("style", "color:white; ");
-    alertBackgroundElement.appendChild(textElement);
-    textElement.innerHTML = message;
-    setTimeout(function () {
-        alertBackgroundElement.parentNode.removeChild(alertBackgroundElement);
-    }, duration);
-    document.body.appendChild(alertBackgroundElement);
-}
 
 (function () {
     'use strict';
+
+    function tempAlert(message, duration) {
+        const textElement = document.createElement("span");
+        textElement.setAttribute("style", "color:white; ");
+        textElement.innerHTML = message;
+        
+        const alertBackgroundElement = document.createElement("div");
+        alertBackgroundElement.setAttribute("style", "position:absolute;bottom:0%;left:50%;background-color:black;border-radius:5px;padding:5px;");
+        
+        alertBackgroundElement.appendChild(textElement);
+
+        setTimeout(function () {
+            alertBackgroundElement.parentNode.removeChild(alertBackgroundElement);
+        }, duration);
+        document.body.appendChild(alertBackgroundElement);
+    }
+    
     // Define a dictionary that contains the link and icon information
     const links = {
         "Copy to clipboard": {
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IB2cksfwAAAAlwSFlzAAASnAAAEpwBstb/cwAAAS9QTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAu8MpQAAAGV0Uk5TAAVs1OdfDwxUfdr+/9aNYhcYqeb6++vGLz9pWr/fQ05rVWV4oIy59/nggUxQXMzu2O/99KP87W50+POikOyH6sqywPLhu/DiYbHxhnx1aHnob4TSyfX2x6iWS1KPfkXlc+O+oc4SX3gfAAAA+ElEQVR4nGNggAFGJmYWVjYGdMDOwcnFzcPLxy+AJiEoJCzCwyMqJi6BJCgpxSQtKcMDBrJy8kwKilAJWR4eZiVlFTBQlVPj4VGHSmjw8GhqaSuCgY6uHlAfVEKEBx0gS+gbcGNKcBsaGfOZmGJKmGmZK1hYWllbgIGNGMIoWws7ex51B0cwcHJGssNFmBuX5cIGRpgSVq5u7h6eWCS8vH18/cTcrP3BwCYAYZRxYJAbj0awKxiEhCLZYamB0+dhAVh8HhouzMUfIRpqCAZWRgiJyKjoGA3b2DgwUNJEGBXPmpDIE5aUDAaObgSD3QuXRDKaFqMUoCAAZeIydEpSbzoAAAAASUVORK5CYII=",
             onclick: function (selectedText) {
-                // copy the selected text to the clipboard
                 navigator.clipboard.writeText(selectedText);
                 tempAlert("Copied to Clipboard!", 1000);
             },
@@ -63,7 +67,7 @@ function tempAlert(message, duration) {
 
 
     // Handle selection changes
-    document.addEventListener("selectionchange", function () {
+    function handleSelectionChange() {
         const selection = document.getSelection();
         if (selection.toString().length) {
             const range = selection.getRangeAt(0);
@@ -71,9 +75,8 @@ function tempAlert(message, duration) {
             const topOffset = 1;
             const rightOffset = 15;
 
-            // first find what elements to show
+            // Find elements to show based on the selected text
             const keysToShow = [];
-
             for (const key in elements) {
                 const element = elements[key];
                 const linkInfo = links[key];
@@ -119,5 +122,7 @@ function tempAlert(message, duration) {
                 element.icon.style.display = "none";
             }
         }
-    });
+    }
+
+    document.addEventListener("selectionchange", handleSelectionChange);
 })();
