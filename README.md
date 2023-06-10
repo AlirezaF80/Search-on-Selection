@@ -24,7 +24,7 @@ Search On Selection is a user script that allows you to perform different action
 
 3. Click on the desired icon to perform the search on the corresponding site.
 
-4. You can customize the entries by modifying the `links` dictionary in the script. Add or remove entries as needed, and specify the search URL, icon and custom functionality for each entry.
+4. You can customize the icons by modifying the `linkInfo` dictionary in the script. Add or remove entries as needed, and specify the search URL, icon and custom functionality for each icon when clicked on.
 
 ## Disclaimer
 
