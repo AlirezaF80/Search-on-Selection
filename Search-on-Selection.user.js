@@ -9,10 +9,19 @@
     'use strict';
     // Define a dictionary that contains the link and icon information
     const links = {
+        "Copy to clipboard": {
+            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IB2cksfwAAAAlwSFlzAAASnAAAEpwBstb/cwAAAS9QTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAu8MpQAAAGV0Uk5TAAVs1OdfDwxUfdr+/9aNYhcYqeb6++vGLz9pWr/fQ05rVWV4oIy59/nggUxQXMzu2O/99KP87W50+POikOyH6sqywPLhu/DiYbHxhnx1aHnob4TSyfX2x6iWS1KPfkXlc+O+oc4SX3gfAAAA+ElEQVR4nGNggAFGJmYWVjYGdMDOwcnFzcPLxy+AJiEoJCzCwyMqJi6BJCgpxSQtKcMDBrJy8kwKilAJWR4eZiVlFTBQlVPj4VGHSmjw8GhqaSuCgY6uHlAfVEKEBx0gS+gbcGNKcBsaGfOZmGJKmGmZK1hYWllbgIGNGMIoWws7ex51B0cwcHJGssNFmBuX5cIGRpgSVq5u7h6eWCS8vH18/cTcrP3BwCYAYZRxYJAbj0awKxiEhCLZYamB0+dhAVh8HhouzMUfIRpqCAZWRgiJyKjoGA3b2DgwUNJEGBXPmpDIE5aUDAaObgSD3QuXRDKaFqMUoCAAZeIydEpSbzoAAAAASUVORK5CYII=",
+            onclick: function (selectedText) {
+                // copy the selected text to the clipboard
+                navigator.clipboard.writeText(selectedText);
+            },
+            getUrl: function (selectedText) { return null; }
+        },
         "Google": {
             icon: "https://www.google.com/s2/favicons?sz=32&domain=google.com",
-            urlFunction: function (name) {
-                return "https://www.google.com/search?q=" + name;
+            onclick: function (selectedText) { },
+            getUrl: function (selectedText) {
+                return "https://www.google.com/search?q=" + selectedText;
             }
         }
     };
@@ -21,7 +30,6 @@
     const elements = {};
     for (const key in links) {
         const link = document.createElement("a");
-        link.href = links[key].url;
         link.target = "_blank";
         link.style.display = "none";
 
@@ -56,13 +64,18 @@
             for (const key in elements) {
                 const element = elements[key];
                 const linkInfo = links[key];
-                let link = linkInfo.urlFunction(selection.toString());
-                // check if link is the same as the page we're on, if so, don't show the link
-                if (link.replace("www.", "") === window.location.href.replace("www.", "")) { // this check takes www. into account
-                    element.link.style.display = "none";
-                    element.icon.style.display = "none";
-                    continue;
+                
+                let link = linkInfo.getUrl(selection.toString());
+                
+                if (link !== null) {
+                    // check if link is the same as the page we're on, if so, don't show the link
+                    if (link.replace("www.", "") === window.location.href.replace("www.", "")) { 
+                        element.link.style.display = "none";
+                        element.icon.style.display = "none";
+                        continue;
+                    }
                 }
+
                 keysToShow.push(key);
             }
 
@@ -71,7 +84,6 @@
                 let key = keysToShow[i];
                 const element = elements[key];
                 const linkInfo = links[key];
-                const link = linkInfo.urlFunction(selection.toString());
                 element.link.style.top = rect.top + window.pageYOffset + "px";
                 element.link.style.left = rect.right + window.pageXOffset + rightOffset + "px";
                 element.link.style.display = "block";
@@ -80,7 +92,12 @@
                 element.icon.style.left = rect.right + window.pageXOffset + rightOffset + "px";
                 element.icon.style.display = "block";
 
-                element.link.href = link;
+                const link = linkInfo.getUrl(selection.toString());
+                if (link !== null){
+                    element.link.href = link;
+                }
+
+                element.link.onclick = linkInfo.onclick.bind(null, selection.toString());
             }
         } else {
             for (const key in elements) {
