@@ -24,7 +24,7 @@
         document.body.appendChild(alertBackgroundElement);
     }
     
-    // Define a dictionary that contains the link and icon information
+    // Define a dictionary that contains the link, icon, and onclick function for each link
     const links = {
         "Copy to clipboard": {
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IB2cksfwAAAAlwSFlzAAASnAAAEpwBstb/cwAAAS9QTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAu8MpQAAAGV0Uk5TAAVs1OdfDwxUfdr+/9aNYhcYqeb6++vGLz9pWr/fQ05rVWV4oIy59/nggUxQXMzu2O/99KP87W50+POikOyH6sqywPLhu/DiYbHxhnx1aHnob4TSyfX2x6iWS1KPfkXlc+O+oc4SX3gfAAAA+ElEQVR4nGNggAFGJmYWVjYGdMDOwcnFzcPLxy+AJiEoJCzCwyMqJi6BJCgpxSQtKcMDBrJy8kwKilAJWR4eZiVlFTBQlVPj4VGHSmjw8GhqaSuCgY6uHlAfVEKEBx0gS+gbcGNKcBsaGfOZmGJKmGmZK1hYWllbgIGNGMIoWws7ex51B0cwcHJGssNFmBuX5cIGRpgSVq5u7h6eWCS8vH18/cTcrP3BwCYAYZRxYJAbj0awKxiEhCLZYamB0+dhAVh8HhouzMUfIRpqCAZWRgiJyKjoGA3b2DgwUNJEGBXPmpDIE5aUDAaObgSD3QuXRDKaFqMUoCAAZeIydEpSbzoAAAAASUVORK5CYII=",
@@ -65,15 +65,20 @@
         elements[key] = { link: link, icon: iconImg };
     }
 
+    function isCurrentPage(url) {
+        return url.replace("www.", "") === window.location.href.replace("www.", "");
+    }
+
 
     // Handle selection changes
     function handleSelectionChange() {
+        const HORIZONTAL_OFFSET = 1;
+        const RIGHT_PADDING = 15;
+
         const selection = document.getSelection();
         if (selection.toString().length) {
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
-            const topOffset = 1;
-            const rightOffset = 15;
 
             // Find elements to show based on the selected text
             const keysToShow = [];
@@ -85,7 +90,7 @@
 
                 if (link !== null) {
                     // check if link is the same as the page we're on, if so, don't show the link
-                    if (link.replace("www.", "") === window.location.href.replace("www.", "")) {
+                    if (isCurrentPage(link)) {
                         element.link.style.display = "none";
                         element.icon.style.display = "none";
                         continue;
@@ -101,11 +106,11 @@
                 const element = elements[key];
                 const linkInfo = links[key];
                 element.link.style.top = rect.top + window.pageYOffset + "px";
-                element.link.style.left = rect.right + window.pageXOffset + rightOffset + "px";
+                element.link.style.left = rect.right + window.pageXOffset + RIGHT_PADDING + "px";
                 element.link.style.display = "block";
-                const iconTop = rect.bottom + window.pageYOffset - i * (element.icon.offsetHeight + topOffset);
+                const iconTop = rect.bottom + window.pageYOffset - i * (element.icon.offsetHeight + HORIZONTAL_OFFSET);
                 element.icon.style.top = iconTop + "px";
-                element.icon.style.left = rect.right + window.pageXOffset + rightOffset + "px";
+                element.icon.style.left = rect.right + window.pageXOffset + RIGHT_PADDING + "px";
                 element.icon.style.display = "block";
 
                 const link = linkInfo.getUrl(selection.toString());
@@ -116,6 +121,7 @@
                 element.link.onclick = linkInfo.onclick.bind(null, selection.toString());
             }
         } else {
+            // Hide all elements if there is no selection
             for (const key in elements) {
                 const element = elements[key];
                 element.link.style.display = "none";
