@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Search On Selection
-// @version      0.2.2
+// @version      0.2.3
 // @description  Search the selected text on different sites with a single click.
 // @match        *://*/*
 // ==/UserScript==
@@ -106,8 +106,13 @@ const CLIPBOARD_ICON_DATA = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAA
                 let key = visibleLinkKeys[i];
                 const currentLinkElement = linkElements[key];
                 const currentLinkInfo = linkInfo[key];
-                currentLinkElement.style.top = selectionBoundingRect.bottom + window.scrollY - i * (currentLinkElement.offsetHeight + HORIZONTAL_OFFSET) + "px";
-                currentLinkElement.style.left = selectionBoundingRect.right + window.scrollY + RIGHT_PADDING + "px";
+
+                const verticalOffset = i * (currentLinkElement.offsetHeight + HORIZONTAL_OFFSET);
+                const centerOffset = (currentLinkElement.offsetHeight / 2) - (selectionBoundingRect.height / 2);
+
+                currentLinkElement.style.top = selectionBoundingRect.bottom + window.scrollY - centerOffset - verticalOffset + "px";
+                currentLinkElement.style.left = selectionBoundingRect.right + window.scrollX + RIGHT_PADDING + "px";
+
                 currentLinkElement.style.display = "block";
 
                 const currentLinkUrl = currentLinkInfo.getUrl(selection.toString());
