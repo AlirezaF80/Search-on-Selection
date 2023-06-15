@@ -32,10 +32,10 @@ const CLIPBOARD_ICON_DATA = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAA
         const textElement = document.createElement("span");
         textElement.setAttribute("style", "color:white; ");
         textElement.innerHTML = message;
-        
+
         const alertBackgroundElement = document.createElement("div");
         alertBackgroundElement.setAttribute("style", "position:absolute;bottom:0%;left:50%;background-color:black;border-radius:5px;padding:5px;");
-        
+
         alertBackgroundElement.appendChild(textElement);
 
         setTimeout(function () {
@@ -69,7 +69,7 @@ const CLIPBOARD_ICON_DATA = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAA
         linkElement.appendChild(iconImg);
         document.body.appendChild(linkElement);
 
-        linkElements[key] = { link: linkElement };
+        linkElements[key] = linkElement;
     }
 
     // Handle selection changes
@@ -90,7 +90,7 @@ const CLIPBOARD_ICON_DATA = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAA
                 if (linkUrl !== null) {
                     // Don't show the link if it's the current page
                     if (isCurrentPage(linkUrl)) {
-                        currentLinkElement.link.style.display = "none";
+                        currentLinkElement.style.display = "none";
                         continue;
                     }
                 }
@@ -100,28 +100,28 @@ const CLIPBOARD_ICON_DATA = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAA
 
             const selectionRange = selection.getRangeAt(0);
             const selectionBoundingRect = selectionRange.getBoundingClientRect();
-            
+
             // Update the visible links urls, onclicks, and positions
             for (let i = 0; i < visibleLinkKeys.length; i++) {
                 let key = visibleLinkKeys[i];
                 const currentLinkElement = linkElements[key];
                 const currentLinkInfo = linkInfo[key];
-                currentLinkElement.link.style.top = selectionBoundingRect.bottom + window.pageYOffset - i * (currentLinkElement.link.offsetHeight + HORIZONTAL_OFFSET) + "px";
-                currentLinkElement.link.style.left = selectionBoundingRect.right + window.pageXOffset + RIGHT_PADDING + "px";
-                currentLinkElement.link.style.display = "block";
+                currentLinkElement.style.top = selectionBoundingRect.bottom + window.scrollY - i * (currentLinkElement.offsetHeight + HORIZONTAL_OFFSET) + "px";
+                currentLinkElement.style.left = selectionBoundingRect.right + window.scrollY + RIGHT_PADDING + "px";
+                currentLinkElement.style.display = "block";
 
                 const currentLinkUrl = currentLinkInfo.getUrl(selection.toString());
                 if (currentLinkUrl !== null) {
-                    currentLinkElement.link.href = currentLinkUrl;
+                    currentLinkElement.href = currentLinkUrl;
                 }
 
-                currentLinkElement.link.onclick = currentLinkInfo.onclick.bind(null, selection.toString());
+                currentLinkElement.onclick = currentLinkInfo.onclick.bind(null, selection.toString());
             }
         } else {
             // Hide all elements if there is no selection
             for (const key in linkElements) {
                 const linkElement = linkElements[key];
-                linkElement.link.style.display = "none";
+                linkElement.style.display = "none";
             }
         }
     }
